@@ -20,8 +20,10 @@ import warnings
 warnings.filterwarnings("ignore")
 #########################################################
 
+st.set_page_config(page_title='Boston', page_icon="🏠")
 #st.set_page_config("Dashboard",  layout="wide")
-st.title('Boston Housing Prices')
+st.image('img/bosten.png')
+st.title('Boston Housing Prices 🏠')
 ##########################################################
 #load dataset
 data = load_boston()
@@ -122,9 +124,16 @@ def RandomForestRegressor_(X, y):
 
 def GridSearchCV_(X, y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=2)
-    parameters = {'max_depth':[8, 10], 'max_features':[7, 10, 13]}
+    hyp = st.sidebar.multiselect('Select hyper-parameters', ('n_estimators', 'max_depth',  'criterion'))
+    parametr ={"n_estimators": [100, 200, 300], 
+                'max_depth':[8, 10], 
+                    'criterion' : ['mse', 'mae']}
+    p = {}
+    st.write(hyp[0])
+    for i in range (len(hyp)): p[hyp[i]] = parametr[hyp[i]]
+    #parameters = {'max_depth':[8, 10], 'max_features':[7, 10, 13]}
     rand_forest_reg3 = RandomForestRegressor(random_state=0)
-    clf = GridSearchCV(rand_forest_reg3, parameters)
+    clf = GridSearchCV(rand_forest_reg3, p)
     clf.fit(X_train, y_train.values.ravel())
    
 
@@ -143,7 +152,9 @@ if model == 'GridSearchCV':
     st.title('GridSearchCV')
     GridSearchCV_(X, y )
 elif model == 'RandomForestRegressor': 
+    st.title('Decision TreeRegressor')
+    train_DecisionTreeRegressor(X, y)
+else: 
     st.title('Random Forests')
     RandomForestRegressor_(X, y)
-else: train_DecisionTreeRegressor(X, y)
 
